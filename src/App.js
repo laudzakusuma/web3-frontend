@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { BrowserProvider, Contract } from 'ethers';
-import HelloWorldABI from './abi/HelloWorldABI.json'; // Pastikan path ini benar
+import HelloWorldABI from './abi/HelloWorldABI.json'; 
 
-// Alamat kontrak pintar Anda (ganti jika perlu)
 const contractAddress = '0x9a36d7337a77e06584Fc3fB22948c430867f5A7b';
 
 function App() {
@@ -10,17 +9,14 @@ function App() {
   const [input, setInput] = useState('');
   const [account, setAccount] = useState(null);
   const [signer, setSigner] = useState(null);
-  // eslint-disable-next-line no-unused-vars
-  const [provider, setProvider] = useState(null); // Tetap ada jika diperlukan di masa mendatang
+  const [provider, setProvider] = useState(null); 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
-  // Efek untuk styling global dan animasi
   useEffect(() => {
     const styleSheet = document.createElement("style");
     styleSheet.type = "text/css";
-    // Menambahkan dan memperbarui keyframes untuk animasi yang lebih kaya
     styleSheet.innerText = `
       @keyframes fadeInEnhanced {
         from { opacity: 0; transform: translateY(25px) scale(0.97); }
@@ -64,7 +60,6 @@ function App() {
     `;
     document.head.appendChild(styleSheet);
 
-    // Stylesheet untuk keyframes spin dan media query tetap ada
     const keyframesStyleSheet = document.createElement("style");
     keyframesStyleSheet.type = "text/css";
     keyframesStyleSheet.innerText = `
@@ -97,7 +92,7 @@ function App() {
   const connectWallet = useCallback(async () => {
     setError('');
     if (!window.ethereum) {
-      setError('Metamask tidak ditemukan! Silakan install Metamask.');
+      setError('MetaMask not found! Please install MetaMask.');
       setIsWalletModalOpen(true);
       return;
     }
@@ -124,7 +119,7 @@ function App() {
         } else {
           setAccount(null);
           setSigner(null);
-          setError('Wallet terputus. Silakan hubungkan kembali.');
+          setError('Wallet disconnected. Please reconnect...');
         }
       });
       window.ethereum.on('chainChanged', () => {
@@ -133,7 +128,7 @@ function App() {
 
     } catch (err) {
       console.error('Wallet connect error:', err);
-      setError('Gagal menghubungkan wallet. Pastikan Anda mengizinkan koneksi di Metamask.');
+      setError('Failed to connect wallet. Please make sure you allow the connection in MetaMask.');
       setIsWalletModalOpen(true);
     } finally {
       setIsLoading(false);
@@ -142,7 +137,7 @@ function App() {
 
   const getContract = useCallback(() => {
     if (!signer || !HelloWorldABI || !HelloWorldABI.abi) {
-        console.error("Signer atau ABI tidak tersedia", {signer, HelloWorldABI});
+        console.error("Signer or ABI not available.", {signer, HelloWorldABI});
         return null;
     }
     return new Contract(contractAddress, HelloWorldABI.abi, signer);
@@ -152,7 +147,7 @@ function App() {
     setError('');
     const contract = getContract();
     if (!contract) {
-      setError('Kontrak tidak tersedia. Pastikan wallet terhubung.');
+      setError('Contract not available. Please make sure your wallet is connected.');
       return;
     }
     setIsLoading(true);
@@ -227,14 +222,13 @@ function App() {
     <div style={styles.container}>
       <header style={styles.header}>
         <h1 style={styles.title}>
-          <span style={styles.titleIcon}>🌌</span> {/* Menggunakan animasi pulseEnhanced */}
-          <span style={styles.titleText}>DApp Greeting Interaktif</span> {/* Menggunakan animasi neonTextGlow */}
+          <span style={styles.titleIcon}>🌌</span> 
+          <span style={styles.titleText}>Decentralized Greeting App</span>
         </h1>
         <button 
           onClick={account ? null : connectWallet} 
           style={account ? {...styles.button, ...styles.buttonConnected} : {...styles.button, ...styles.buttonConnect}}
           disabled={isLoading || !!account}
-          // Menambahkan transisi pada tombol untuk efek hover/active yang lebih halus dari browser
           onMouseEnter={(e) => {
             if (!account && !isLoading) e.currentTarget.style.transform = 'scale(1.05) translateY(-2px)';
           }}
@@ -248,7 +242,7 @@ function App() {
             if (!account && !isLoading) e.currentTarget.style.transform = 'scale(1.05) translateY(-2px)';
           }}
         >
-          {isLoading && !account ? 'Menghubungkan...' : (account ? `🟢 Terhubung: ${account.slice(0, 6)}...${account.slice(-4)}` : '🔗 Hubungkan Wallet')}
+          {isLoading && !account ? 'Connecting...' : (account ? `🟢 Connected: ${account.slice(0, 6)}...${account.slice(-4)}` : '🔗 Connect your wallet')}
         </button>
       </header>
 
@@ -265,13 +259,12 @@ function App() {
 
       {account ? (
         <>
-          {/* Menggunakan animasi fadeInEnhanced */}
           <div style={{...styles.card, animation: 'fadeInEnhanced 1s ease-out'}}>
-            <p style={styles.label}>Pesan Saat Ini dari Smart Contract:</p>
+            <p style={styles.label}>Message from Smart Contract:</p>
             {isLoading && !greeting ? (
-                 <div style={styles.spinnerContainer}><div style={styles.spinner}></div>Memuat...</div>
+                 <div style={styles.spinnerContainer}><div style={styles.spinner}></div>Loading...</div>
             ) : (
-                <p style={styles.greetingText}>{greeting || "Belum ada pesan."}</p>
+                <p style={styles.greetingText}>{greeting || "No new messages."}</p>
             )}
             <button 
               onClick={fetchGreeting} 
@@ -280,17 +273,16 @@ function App() {
               onMouseEnter={(e) => e.currentTarget.style.filter = 'brightness(1.2)'}
               onMouseLeave={(e) => e.currentTarget.style.filter = 'brightness(1)'}
             >
-              {isLoading ? 'Memuat...' : '🔄 Segarkan Pesan'}
+              {isLoading ? 'Loading...' : '🔄 Refresh'}
             </button>
           </div>
 
-          {/* Menggunakan animasi fadeInEnhanced dengan delay */}
           <div style={{...styles.card, animation: 'fadeInEnhanced 1.2s ease-out 0.2s backwards'}}>
-            <label htmlFor="greetingInput" style={styles.label}>Ubah Pesan:</label>
+            <label htmlFor="greetingInput" style={styles.label}>Edit Message:</label>
             <input
               id="greetingInput"
               type="text"
-              placeholder="Tulis pesan baru di sini..."
+              placeholder="Text Here..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               style={styles.input}
@@ -307,18 +299,18 @@ function App() {
                  if (!isLoading && input.trim()) e.currentTarget.style.transform = 'scale(1)';
               }}
             >
-              {isLoading ? 'Mengirim...' : '✉️ Kirim Pesan Baru'}
+              {isLoading ? 'Sending...' : '✉️ Send a new message...'}
             </button>
           </div>
         </>
       ) : (
         <div style={{...styles.card, ...styles.centeredMessage, animation: 'fadeInEnhanced 1s ease-out'}}>
-          <p>Silakan hubungkan wallet MetaMask Anda untuk berinteraksi dengan DApp.</p>
-          {!window.ethereum && <p>MetaMask sepertinya belum terinstal. <a href="https://metamask.io/download/" target="_blank" rel="noopener noreferrer" style={styles.link}>Klik di sini untuk menginstal</a>.</p>}
+          <p>Please connect your MetaMask wallet to interact with the DApp.</p>
+          {!window.ethereum && <p>MetaMask doesn't seem to be installed. Please install . <a href="https://metamask.io/download/" target="_blank" rel="noopener noreferrer" style={styles.link}>Klik di sini untuk menginstal</a>.</p>}
         </div>
       )}
       <footer style={styles.footer}>
-        <p>&copy; {new Date().getFullYear()} DApp Greeting Interaktif. Dibuat dengan <span style={{color: '#ff7b7b', animation: 'pulseEnhanced 1.5s infinite ease-in-out'}}>❤️</span> & React.</p>
+        <p>&copy; {new Date().getFullYear()} Decentralized Application by Laudza Kusuma</p>
       </footer>
     </div>
   );
@@ -335,52 +327,51 @@ const styles = {
   },
   header: {
     width: '100%',
-    maxWidth: '850px', // Sedikit lebih lebar
+    maxWidth: '850px', 
     display: 'flex',
     flexDirection: 'column', 
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: '50px', // Margin lebih besar
+    marginBottom: '50px', 
     paddingBottom: '25px',
-    borderBottom: '1px solid rgba(0, 198, 255, 0.2)', // Border lebih visible
+    borderBottom: '1px solid rgba(0, 198, 255, 0.2)', 
     animation: 'fadeInEnhanced 0.7s ease-out',
     textAlign: 'center', 
   },
   title: {
-    fontSize: 'clamp(2rem, 6vw, 3.2rem)', // Ukuran font lebih besar
+    fontSize: 'clamp(2rem, 6vw, 3.2rem)', 
     color: '#ffffff',
     margin: '0 0 20px 0', 
     display: 'flex',
     alignItems: 'center',
-    gap: '15px', // Jarak antar ikon dan teks
+    gap: '15px',
   },
   titleIcon: {
     fontSize: 'clamp(2.2rem, 7vw, 3.5rem)',
-    animation: 'pulseEnhanced 2.5s infinite ease-in-out', // Menggunakan pulseEnhanced
-    filter: 'drop-shadow(0 0 10px rgba(0,198,255,0.7))' // Efek drop shadow
+    animation: 'pulseEnhanced 2.5s infinite ease-in-out', 
+    filter: 'drop-shadow(0 0 10px rgba(0,198,255,0.7))'
   },
-  titleText: { // Style untuk teks judul agar bisa dianimasikan terpisah
+  titleText: {
     animation: 'neonTextGlow 3s infinite alternate',
   },
   card: {
-    background: 'rgba(30, 40, 70, 0.7)', // Background lebih gelap dan transparan
-    backdropFilter: 'blur(12px) saturate(150%)', // Efek glassmorphism lebih kuat
+    background: 'rgba(30, 40, 70, 0.7)', 
+    backdropFilter: 'blur(12px) saturate(150%)',
     border: '1px solid rgba(0, 198, 255, 0.25)',
-    padding: '30px', // Padding lebih besar
-    borderRadius: '20px', // Border radius lebih besar
+    padding: '30px', 
+    borderRadius: '20px',
     marginTop: '30px',
     width: '100%',
-    maxWidth: '650px', // Card lebih lebar
-    boxShadow: '0 10px 35px 0 rgba(0, 0, 0, 0.3), 0 0 15px rgba(0,198,255,0.1) inset', // Shadow lebih kompleks
+    maxWidth: '650px',
+    boxShadow: '0 10px 35px 0 rgba(0, 0, 0, 0.3), 0 0 15px rgba(0,198,255,0.1) inset', 
     textAlign: 'center',
-    transition: 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease', // Transisi lebih menarik
-    // Efek hover dipindahkan ke event handler untuk konsistensi
+    transition: 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease',
   },
   label: {
     fontSize: 'clamp(1.1rem, 2.8vw, 1.3rem)',
     marginBottom: '15px',
-    color: '#21d4fd', // Warna label diubah
-    fontWeight: 'bold', // Lebih tebal
+    color: '#21d4fd', 
+    fontWeight: 'bold', 
     display: 'block', 
     textShadow: '0 0 5px rgba(33,212,253,0.3)',
   },
@@ -390,34 +381,33 @@ const styles = {
     color: '#ffffff',
     margin: '15px 0 25px 0',
     padding: '20px',
-    background: 'linear-gradient(145deg, rgba(0, 198, 255, 0.15), rgba(0, 198, 255, 0.05))', // Gradient background
+    background: 'linear-gradient(145deg, rgba(0, 198, 255, 0.15), rgba(0, 198, 255, 0.05))', 
     borderRadius: '12px',
     minHeight: '60px',
     wordBreak: 'break-all',
     borderLeft: '5px solid #00c6ff',
     boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
-    transition: 'all 0.3s ease', // Transisi untuk perubahan teks
+    transition: 'all 0.3s ease', 
   },
   button: {
-    padding: '14px 28px', // Padding lebih besar
+    padding: '14px 28px',
     margin: '12px 8px',
     border: 'none',
-    borderRadius: '10px', // Border radius lebih besar
+    borderRadius: '10px',
     cursor: 'pointer',
     fontWeight: 'bold',
     fontSize: 'clamp(0.95rem, 2.2vw, 1.05rem)',
-    transition: 'all 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55)', // Transisi lebih 'bouncy'
+    transition: 'all 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
     textTransform: 'uppercase',
     letterSpacing: '1.2px',
     outline: 'none',
-    position: 'relative', // Untuk efek pseudo-elements jika ditambahkan via CSS
-    overflow: 'hidden', // Untuk efek shine jika ditambahkan
+    position: 'relative', 
+    overflow: 'hidden',
   },
   buttonConnect: {
     backgroundColor: '#00c6ff',
-    color: '#101528', // Warna teks kontras
+    color: '#101528',
     boxShadow: '0 0 12px rgba(0,198,255,0.6), 0 0 20px rgba(0,198,255,0.4), 0 4px 8px rgba(0,0,0,0.2)',
-    // Efek hover ditangani via onMouseEnter/Leave
   },
   buttonConnected: {
     backgroundColor: 'transparent',
@@ -428,38 +418,36 @@ const styles = {
   },
   buttonAction: {
     backgroundColor: 'rgba(0, 198, 255, 0.25)',
-    color: '#00e0ff', // Warna teks lebih cerah
+    color: '#00e0ff',
     border: '1px solid #00c6ff',
-    // Efek hover ditangani via onMouseEnter/Leave
   },
   buttonPrimary: {
     backgroundColor: '#00c6ff',
     color: '#101528',
     boxShadow: '0 0 10px #00c6ff, 0 0 18px #00c6ff',
-    // Efek hover ditangani via onMouseEnter/Leave
   },
   input: {
-    padding: '14px 18px', // Padding lebih besar
+    padding: '14px 18px',
     width: 'calc(100% - 38px)', 
-    maxWidth: '450px', // Input lebih lebar
+    maxWidth: '450px',
     borderRadius: '10px',
-    border: '2px solid rgba(0, 198, 255, 0.5)', // Border lebih tebal
-    backgroundColor: 'rgba(255, 255, 255, 0.08)', // Background sedikit lebih opaque
+    border: '2px solid rgba(0, 198, 255, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
     color: '#e8e8e8',
-    fontSize: '1.05rem', // Font sedikit lebih besar
+    fontSize: '1.05rem',
     marginBottom: '20px',
     outline: 'none',
     transition: 'border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease',
     // Efek focus:
-    // ':focus': { // Tidak bisa langsung di inline style, tapi transisi akan menghaluskan efek browser default
+    // ':focus': {
     //   borderColor: '#00e0ff',
     //   boxShadow: '0 0 12px rgba(0, 198, 255, 0.6), 0 0 0 3px rgba(0,198,255,0.2)',
     //   transform: 'scale(1.01)',
     // },
   },
   errorMessage: {
-    backgroundColor: 'rgba(255, 80, 80, 0.2)', // Warna error lebih lembut
-    color: '#ff9a9a', // Teks error lebih terang
+    backgroundColor: 'rgba(255, 80, 80, 0.2)', 
+    color: '#ff9a9a',
     border: '1px solid rgba(255, 80, 80, 0.6)',
     padding: '18px',
     borderRadius: '10px',
@@ -473,14 +461,14 @@ const styles = {
   centeredMessage: {
     textAlign: 'center',
     fontSize: '1.15rem',
-    color: '#c0c0c0', // Warna teks lebih terang
+    color: '#c0c0c0',
   },
   link: {
-    color: '#21d4fd', // Warna link diubah
-    textDecoration: 'underline', // Garis bawah default
+    color: '#21d4fd',
+    textDecoration: 'underline',
     fontWeight: 'bold',
     transition: 'color 0.3s ease, text-shadow 0.3s ease',
-    // ':hover': { // Tidak bisa langsung
+    // ':hover': {
     //   color: '#50e3ff',
     //   textShadow: '0 0 5px #50e3ff',
     // }
@@ -491,25 +479,25 @@ const styles = {
     padding: '35px 0 15px 0',
     marginTop: 'auto', 
     fontSize: '0.95rem',
-    color: 'rgba(255, 255, 255, 0.6)', // Warna footer lebih terang
-    borderTop: '1px solid rgba(0, 198, 255, 0.15)', // Border footer lebih visible
+    color: 'rgba(255, 255, 255, 0.6)',
+    borderTop: '1px solid rgba(0, 198, 255, 0.15)',
   },
   spinnerContainer: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     color: '#00c6ff',
-    fontSize: '1.25rem', // Font lebih besar
+    fontSize: '1.25rem',
     margin: '25px 0',
   },
-  spinner: { // Spinner lebih menarik
+  spinner: {
     border: '5px solid rgba(0, 198, 255, 0.2)',
     borderTop: '5px solid #00c6ff',
-    borderRight: '5px solid #00c6ff', // Tambahan untuk efek visual
+    borderRight: '5px solid #00c6ff',
     borderRadius: '50%',
-    width: '35px', // Ukuran lebih besar
+    width: '35px',
     height: '35px',
-    animation: 'spin 0.8s linear infinite', // Spin lebih cepat
+    animation: 'spin 0.8s linear infinite',
     marginRight: '12px',
   },
   modalOverlay: {
