@@ -155,8 +155,8 @@ function App() {
       const value = await contract.getGreeting();
       setGreeting(value);
     } catch (err) {
-      console.error('Gagal fetch greeting:', err);
-      setError('Gagal mengambil greeting dari smart contract.');
+      console.error('Failed to fetch greeting:', err);
+      setError('Failed to retrieve greeting from smart contract.');
     } finally {
       setIsLoading(false);
     }
@@ -164,13 +164,13 @@ function App() {
 
   const updateGreeting = useCallback(async () => {
     if (!input.trim()) {
-      setError('Input greeting tidak boleh kosong.');
+      setError('Input greeting cannot be empty.');
       return;
     }
     setError('');
     const contract = getContract();
     if (!contract) {
-      setError('Kontrak tidak tersedia. Pastikan wallet terhubung.');
+      setError('Contract not available. Please ensure your wallet is connected.');
       return;
     }
     setIsLoading(true);
@@ -180,12 +180,12 @@ function App() {
       fetchGreeting(); 
       setInput('');
     } catch (err) {
-      console.error('Gagal update greeting:', err);
-      let specificError = 'Gagal memperbarui greeting.';
+      console.error('Failed to update greeting:', err);
+      let specificError = 'Failed to update greeting.';
       if (err.reason) {
-        specificError += ` Penyebab: ${err.reason}`;
+        specificError += ` Reason: ${err.reason}`;
       } else if (err.message && err.message.includes("user rejected transaction")) {
-        specificError = "Transaksi dibatalkan oleh pengguna.";
+        specificError = "Transaction cancelled by user.";
       }
       setError(specificError);
     } finally {
